@@ -1,0 +1,9 @@
+## Interface: 80250
+## Title: Warband Bank Item Count Tooltip
+## Notes: Cause it'd be nice to know if something is in the Warband Bank or not
+## SavedVariables: WBICT_DB
+## Version: 0.1
+
+WarbandBankItemCountTooltip.lua
+services/warbank.lua
+services/tooltip.lua
