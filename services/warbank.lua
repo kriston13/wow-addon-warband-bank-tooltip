@@ -8,7 +8,7 @@ WBICT:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
 WBICT:RegisterEvent("BAG_UPDATE") -- BAG_UPDATE_DELAYED doesn't include the bagId, but BAG_UPDATE does
 
 
-local isBankOpen, mustUpdate
+local isBankOpen = false
 local WarbankStart = BACKPACK_CONTAINER + ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS 
 local WarbankEnd = WarbankStart + 4
 local bankContents = {}
@@ -17,9 +17,10 @@ local bankContents = {}
 -- bankContents[id][2] = stackCount
 -- bankContents[id][3] = name (debugging)
 local function ScanWarbandBank()
+
     if isBankOpen then
         print("Scanning Warband Bank")
-        mustUpdate = false
+        -- mustUpdate = false
         wipe(bankContents)
 
         for bag=WarbankStart, WarbankEnd,1 do
@@ -42,8 +43,6 @@ local function ScanWarbandBank()
         if next(bankContents) ~= nil then
             WBICT:Save(bankContents)
         end 
-    else
-        mustUpdate = true
     end
 
 end
@@ -60,33 +59,28 @@ end
 
 
 function WBICT:PLAYERBANKBAGSLOTS_CHANGED(e)
-    isBankOpen = true
+    -- isBankOpen = true
     C_Timer.After(0.5, ScanWarbandBank)
 end
 
 
 function WBICT:PLAYERBANKSLOTS_CHANGED(e)
-    isBankOpen = true
+    -- isBankOpen = true
     C_Timer.After(0.5, ScanWarbandBank)
 end
 
 
 function WBICT:PLAYERREAGENTBANKSLOTS_CHANGED(e)
-    isBankOpen = true
+    -- isBankOpen = true
     C_Timer.After(0.5, ScanWarbandBank)
 end
 
 local updateTimer
 local lastUpdatedBag
 function WBICT:BAG_UPDATE(bagId)
-    -- if bagId then
-    --     print("DEBUG: Bag updated - Bag ID:", bagId)
-    -- else
-    --     print("DEBUG: A bag was updated.")
-    -- end
 
     -- Check if the updated bag is a Warband bank bag
-    if bagId and bagId >= WarbankStart and bagId <= WarbankEnd then
+    if bagId and bagId >= WarbankStart and bagId <= WarbankEnd and isBankOpen then
         lastUpdatedBag = bagId  -- Store the last updated bag ID
 
         -- Throttle updates with a timer
